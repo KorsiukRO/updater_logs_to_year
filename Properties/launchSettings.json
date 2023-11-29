@@ -2,7 +2,7 @@
   "profiles": {
     "updater_logs_to_year": {
       "commandName": "Project",
-      "commandLineArgs": "C:/Prosafe/Scheduler/tasks.config 365 "
+      "commandLineArgs": "C:/Prosafe/Scheduler/tasks.config --days 24 "
     }
   }
 }
