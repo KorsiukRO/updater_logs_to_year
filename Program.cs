@@ -26,7 +26,7 @@ class Program
 
             // Збереження змін у файл
             xmlDoc.Save(filePath);
-            Console.WriteLine($"Значення <maxArchiveFiles> успiшно змiнено на {args[1]}.");
+            Console.WriteLine($"The value of <maxArchiveFiles> was successfully changed to {args[1]}.");
         }
         else
         {
