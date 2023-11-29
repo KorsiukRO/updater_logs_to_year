@@ -1,26 +1,36 @@
 ﻿using System.Reflection;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using System.Xml.XPath;
+using System.Xml;
 
-var location = new Uri(Assembly.GetEntryAssembly().CodeBase).LocalPath;
-var path = Path.GetDirectoryName(location);
-//var filePath = Path.GetFullPath(Convert.ToString((args[0])));
-var filePath = Path.GetFullPath(Convert.ToString("C:/prosafe/scheduler/tasks.config"));
-
-if (!File.Exists(filePath))
+class Program
 {
-    throw new InvalidOperationException("\nERROR: C:/prosafe/sheduler/tasks.config not found!");
+    static void Main(string[] args)
+    {
+        var filePath = "C:/prosafe/scheduler/tasks.config";
+
+        if (!File.Exists(filePath)) //перевірка наявності файлу конфігурації
+        {
+            throw new InvalidOperationException($"\nERROR: {filePath} not found!");
+        }
+
+        // Завантаження XML-документа
+        XmlDocument xmlDoc = new XmlDocument();
+        xmlDoc.Load(filePath);
+
+        // Знайдення елементу <maxArchiveFiles>
+        XmlNode maxArchiveFilesNode = xmlDoc.SelectSingleNode("//maxArchiveFiles");
+
+        if (maxArchiveFilesNode != null)
+        {
+            // Зміна значення елементу <maxArchiveFiles>
+            maxArchiveFilesNode.InnerText = args[1];
+
+            // Збереження змін у файл
+            xmlDoc.Save(filePath);
+            Console.WriteLine($"Значення <maxArchiveFiles> успiшно змiнено на {args[1]}.");
+        }
+        else
+        {
+            throw new InvalidOperationException("\n<maxArchiveFiles> not found!"); 
+        }
+    }
 }
-
-var document = XDocument.Load(filePath);
-
-var rootcourse = document.XPathSelectElement("tasks/task[@name='LogArchiverSchedulerTask'][@type='log']/customconfig/maxArchiveFiles");
-//var gieseckeEnabledElement = document.XPathSelectElement("tasks/task[@name='LogArchiverSchedulerTask'][@type='log']/customconfig/maxArchiveFiles");
-//if (gieseckeEnabledElement?.Value != Convert.ToString(365))
-//{
-//    gieseckeEnabledElement.Value = Convert.ToString(365);
-//    document.Save(filePath);
-//}
-
-Console.WriteLine(document);
