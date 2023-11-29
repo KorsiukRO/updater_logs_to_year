@@ -1,38 +1,38 @@
 ﻿using System.Xml;
+using Cocona;
 
-namespace updater_logs_to_year
+CoconaApp.Run(async (string days) =>
+    await MigrateHdServiceConfigAsync(days)
+);
+
+async Task MigrateHdServiceConfigAsync(string days)
 {
-    class Program
+    var filePath = "C:/prosafe/scheduler/tasks.config";
+
+    if (!File.Exists(filePath)) //перевірка наявності файлу конфігурації
     {
-        static void Main(string[] args)
-        {
-            var filePath = "C:/prosafe/scheduler/tasks.config";
+        throw new InvalidOperationException($"\nERROR: {filePath} not found!");
+    }
 
-            if (!File.Exists(filePath)) //перевірка наявності файлу конфігурації
-            {
-                throw new InvalidOperationException($"\nERROR: {filePath} not found!");
-            }
+    // Завантаження XML-документа
+    XmlDocument xmlDoc = new XmlDocument();
+    xmlDoc.Load(filePath);
 
-            // Завантаження XML-документа
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(filePath);
+    // Знайдення елементу <maxArchiveFiles>
+    XmlNode maxArchiveFilesNode = xmlDoc.SelectSingleNode("//maxArchiveFiles");
 
-            // Знайдення елементу <maxArchiveFiles>
-            XmlNode maxArchiveFilesNode = xmlDoc.SelectSingleNode("//maxArchiveFiles");
+    if (maxArchiveFilesNode != null)
+    {
+        // Зміна значення елементу <maxArchiveFiles>
+        maxArchiveFilesNode.InnerText = days;
 
-            if (maxArchiveFilesNode != null)
-            {
-                // Зміна значення елементу <maxArchiveFiles>
-                maxArchiveFilesNode.InnerText = args[1];
-
-                // Збереження змін у файл
-                xmlDoc.Save(filePath);
-                Console.WriteLine($"The value of <maxArchiveFiles> was successfully changed to {args[1]}.");
-            }
-            else
-            {
-                throw new InvalidOperationException("\n<maxArchiveFiles> not found!");
-            }
-        }
+        // Збереження змін у файл
+        xmlDoc.Save(filePath);
+        Console.WriteLine($"The value of <maxArchiveFiles> was successfully changed to {days}.");
+    }
+    else
+    {
+        throw new InvalidOperationException("\n<maxArchiveFiles> not found!");
     }
 }
+     
