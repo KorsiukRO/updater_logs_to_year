@@ -1,36 +1,38 @@
-﻿using System.Reflection;
-using System.Xml;
+﻿using System.Xml;
 
-class Program
+namespace updater_logs_to_year
 {
-    static void Main(string[] args)
+    class Program
     {
-        var filePath = "C:/prosafe/scheduler/tasks.config";
-
-        if (!File.Exists(filePath)) //перевірка наявності файлу конфігурації
+        static void Main(string[] args)
         {
-            throw new InvalidOperationException($"\nERROR: {filePath} not found!");
-        }
+            var filePath = "C:/prosafe/scheduler/tasks.config";
 
-        // Завантаження XML-документа
-        XmlDocument xmlDoc = new XmlDocument();
-        xmlDoc.Load(filePath);
+            if (!File.Exists(filePath)) //перевірка наявності файлу конфігурації
+            {
+                throw new InvalidOperationException($"\nERROR: {filePath} not found!");
+            }
 
-        // Знайдення елементу <maxArchiveFiles>
-        XmlNode maxArchiveFilesNode = xmlDoc.SelectSingleNode("//maxArchiveFiles");
+            // Завантаження XML-документа
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(filePath);
 
-        if (maxArchiveFilesNode != null)
-        {
-            // Зміна значення елементу <maxArchiveFiles>
-            maxArchiveFilesNode.InnerText = args[1];
+            // Знайдення елементу <maxArchiveFiles>
+            XmlNode maxArchiveFilesNode = xmlDoc.SelectSingleNode("//maxArchiveFiles");
 
-            // Збереження змін у файл
-            xmlDoc.Save(filePath);
-            Console.WriteLine($"The value of <maxArchiveFiles> was successfully changed to {args[1]}.");
-        }
-        else
-        {
-            throw new InvalidOperationException("\n<maxArchiveFiles> not found!"); 
+            if (maxArchiveFilesNode != null)
+            {
+                // Зміна значення елементу <maxArchiveFiles>
+                maxArchiveFilesNode.InnerText = args[1];
+
+                // Збереження змін у файл
+                xmlDoc.Save(filePath);
+                Console.WriteLine($"The value of <maxArchiveFiles> was successfully changed to {args[1]}.");
+            }
+            else
+            {
+                throw new InvalidOperationException("\n<maxArchiveFiles> not found!");
+            }
         }
     }
 }
